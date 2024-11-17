@@ -7,6 +7,7 @@ import com.genixo.akarsu.repository.LogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class LogService {
         log.setDocument(document);
         log.setUser(user);
         log.setTransaction(transaction);
-        log.setRecordDate(new java.sql.Date(System.currentTimeMillis()));
+        log.setRecordDate(new Date(System.currentTimeMillis()));
         log.setIp(ip);
         repository.saveAndFlush(log);
     }

@@ -3,11 +3,12 @@ package com.genixo.akarsu.service;
 import com.genixo.akarsu.domain.Document;
 import com.genixo.akarsu.domain.Transaction;
 import com.genixo.akarsu.domain.User;
+import com.genixo.akarsu.dto.DocumentSentDto;
 import com.genixo.akarsu.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -78,5 +79,9 @@ gonder
 
     public List<Transaction> myDocuments(Long userId) {
         return repository.myDocuments(userId);
+    }
+
+    public void documentSend(DocumentSentDto documentSentDto) {
+        send(documentSentDto.getTransactionId(), documentSentDto.getDocumentId(), documentSentDto.getSenderId(), documentSentDto.getReceiverId(), documentSentDto.getNote(), documentSentDto.getIsCopy());
     }
 }

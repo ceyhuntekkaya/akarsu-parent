@@ -6,7 +6,7 @@ import com.genixo.akarsu.repository.DocumentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -20,25 +20,38 @@ public class DocumentService {
     }
 
     public List<Document> documentSearch(DocumentSearchDto params) {
-        String number = params.getNumber();
-        String subject = params.getSubject();
-        String word = params.getWord();
-        String type = params.getType();
-        String group = params.getGroup();
-        Long projectId = params.getProjectId();
-        java.sql.Date dateBegin = params.getDateBegin();
-        Date dateEnd = params.getDateEnd();
+        Date currentDate = new Date(System.currentTimeMillis());
+        Date dateBegin = currentDate;
+        Date dateEnd = currentDate;
+        long projectId = 0L;
+
+        String number = params.getDocumentNumber().toUpperCase();
+        String subject = params.getSubject().toUpperCase();
+        String word = params.getSearchWord().toUpperCase();
+        String type = params.getDocumentType().toUpperCase();
+        String group = params.getDocumentGroup().toUpperCase();
+
+        if (params.getProjectId() > 0) {
+            projectId = params.getProjectId();
+        }
+        if (params.getBeginAt() != null) {
+            dateBegin = params.getBeginAt();
+        }
+        if (params.getBeginAt() != null) {
+            dateEnd = params.getEndAt();
+        }
         Boolean archive = params.getArchive();
-        if (projectId == null && dateBegin == null && dateEnd == null) {
+
+        if (projectId == 0 && dateBegin == currentDate && dateEnd == currentDate) {
             return repository.find(number, subject, word, type, group, archive);
-        } else if (projectId != null && dateBegin != null && dateEnd != null) {
+        } else if (projectId > 0 && dateBegin != currentDate && dateEnd != currentDate) {
             return repository.findProjectAndDate(number, subject, word, type, group, archive, projectId, dateBegin, dateEnd);
-        } else if (projectId != null && dateBegin == null && dateEnd == null) {
+        } else if (projectId > 0 && dateBegin == currentDate && dateEnd == currentDate) {
             return repository.findProject(number, subject, word, type, group, archive, projectId);
-        } else if (projectId == null && dateBegin != null && dateEnd != null) {
+        } else if (projectId == 0 && dateBegin != currentDate && dateEnd != currentDate) {
             return repository.findDate(number, subject, word, type, group, archive, dateBegin, dateEnd);
         } else {
-            return repository.findWord(number, subject, word, type, group);
+            return repository.findWord(number, subject, word, type, group, archive);
         }
     }
 
@@ -55,7 +68,7 @@ public class DocumentService {
         return repository.saveAndFlush(document);
     }
 
-    public Document archive(Long transactionId, Long documentId , Boolean archive, Long userId) {
+    public Document archive(Long transactionId, Long documentId, Boolean archive, Long userId) {
         Document document = repository.findById(documentId).orElse(null);
         assert document != null;
         document.setArchive(archive);
@@ -67,13 +80,20 @@ public class DocumentService {
 
     public Document add(Document document) {
         /// TODO: LOG Add
-       // sayı kontrol et
+        // sayı kontrol et
         // kendine gönder
 
         Document checkDocument = repository.findByProjectAndNumber(
                 document.getProject().getId(),
                 document.getNumber()
         ).orElse(null);
+
+        document.setNumber(document.getNumber().toUpperCase());
+        document.setSubject(document.getSubject().toUpperCase());
+        document.setOcr(document.getOcr().toUpperCase());
+        document.setType(document.getType().toUpperCase());
+        document.setGroup(document.getGroup().toUpperCase());
+
 
         if (checkDocument == null) {
             Document createdDocument = repository.saveAndFlush(document);

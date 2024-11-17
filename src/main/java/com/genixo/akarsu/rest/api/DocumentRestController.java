@@ -1,11 +1,9 @@
 package com.genixo.akarsu.rest.api;
 
-import com.genixo.akarsu.domain.Document;
-import com.genixo.akarsu.domain.DocumentFile;
-import com.genixo.akarsu.domain.Log;
-import com.genixo.akarsu.domain.Transaction;
+import com.genixo.akarsu.domain.*;
 import com.genixo.akarsu.dto.DocumentDetailDto;
 import com.genixo.akarsu.dto.DocumentSearchDto;
+import com.genixo.akarsu.dto.DocumentSentDto;
 import com.genixo.akarsu.service.DocumentFileService;
 import com.genixo.akarsu.service.DocumentService;
 import com.genixo.akarsu.service.LogService;
@@ -35,7 +33,7 @@ public class DocumentRestController {
         List<DocumentDetailDto> result = new ArrayList<>();
         List<Transaction> transactions = transactionService.myDocuments(userId);
         for (Transaction transaction : transactions) {
-            if(transaction.getDocument() != null){
+            if (transaction.getDocument() != null) {
                 List<Log> logs = logService.findByDocumentId(transaction.getDocument().getId());
                 List<DocumentFile> files = documentFileService.findByDocumentId(transaction.getDocument().getId());
                 DocumentDetailDto documentDetailDto = new DocumentDetailDto();
@@ -48,24 +46,12 @@ public class DocumentRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-
-
-
-
-
-
     @GetMapping(value = "/", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Document>> findAll() {
         List<Document> result = documentService.findAll();
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/search", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
-        List<Document> documents = documentService.documentSearch(params);
-        return new ResponseEntity<>(documents, HttpStatus.CREATED);
-    }
 
     @GetMapping(value = "/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Document> findById(@PathVariable("documentId") Long documentId) {
@@ -80,8 +66,8 @@ public class DocumentRestController {
     }
 
     @GetMapping(value = "/{transactionId}/{documentId}/{archive}/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Document> archive(@PathVariable("transactionId") Long transactionId, @PathVariable("documentId") Long documentId , @PathVariable("archive") Boolean archive, @PathVariable("userId") Long userId) {
-        Document result = documentService.archive(transactionId, documentId , archive, userId);
+    public ResponseEntity<Document> archive(@PathVariable("transactionId") Long transactionId, @PathVariable("documentId") Long documentId, @PathVariable("archive") Boolean archive, @PathVariable("userId") Long userId) {
+        Document result = documentService.archive(transactionId, documentId, archive, userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
@@ -91,12 +77,30 @@ public class DocumentRestController {
         return new ResponseEntity<>(documents, HttpStatus.CREATED);
     }
 
-
-
     @GetMapping(value = "/user/{userId}/project/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Document>> findByUserAndProject(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId ) {
+    public ResponseEntity<List<Document>> findByUserAndProject(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
         List<Document> result = documentService.findByUserAndProject(userId, projectId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+
+    @PostMapping(value = "/search/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
+        List<Document> documents = documentService.documentSearch(params);
+        return new ResponseEntity<>(documents, HttpStatus.CREATED);
+    }
+
+
+    @PostMapping(value = "/send/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Transaction>> documentSend(DocumentSentDto documentSentDto) {
+        transactionService.documentSend(documentSentDto);
+        List<Transaction> result = transactionService.findByDocumentId(documentSentDto.getDocumentId());
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/transaction/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Transaction>> getTransactions(@PathVariable("documentId") Long documentId) {
+        List<Transaction> result = transactionService.findByDocumentId(documentId);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 }
