@@ -1,4 +1,4 @@
-package com.genixo.akarsu.common.exceptions;
+package com.genixo.akarsu.common.exception;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

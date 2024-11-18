@@ -1,9 +1,6 @@
-
 spring:
   profiles:
-    active: dev, config-url, auto-db-create
-
-
+    active: dev, config-url
 
   datasource:
     url: jdbc:sqlserver://;serverName=localhost;databaseName=akarsu;encrypt=true;trustServerCertificate=true;
@@ -11,7 +8,6 @@ spring:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     username: sa
     password: Str421900*
-
 
   jpa:
     hibernate:
@@ -25,13 +21,10 @@ spring:
         dialect: org.hibernate.dialect.SQLServerDialect
         physicalNamingStrategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
 
-
 management:
   endpoints:
     web:
       base-path: /system/actuator
-
-
 
 application:
   security:

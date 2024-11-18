@@ -1,4 +1,4 @@
-package com.genixo.akarsu.common.exceptions;
+package com.genixo.akarsu.common.exception;
 
 
 import org.springframework.http.HttpStatus;
