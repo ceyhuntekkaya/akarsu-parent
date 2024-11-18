@@ -12,15 +12,6 @@ spring:
     username: sa
     password: Str421900*
 
-  flyway:
-    baselineOnMigrate: true
-    user: sa
-    password: Str421900*
-    schemas: dbo
-    url: jdbc:sqlserver://;serverName=localhost;databaseName=akarsu;encrypt=true;trustServerCertificate=true;
-    locations:
-      - classpath:/org/genixo/miamo/db/migration
-    enabled: false
 
   jpa:
     hibernate:
@@ -40,9 +31,6 @@ management:
     web:
       base-path: /system/actuator
 
-logging:
-  level:
-    org.genixo.miamo: DEBUG
 
 
 application:
