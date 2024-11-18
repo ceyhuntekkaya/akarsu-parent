@@ -13,15 +13,6 @@ public class ProjectService {
     final ProjectRepository repository;
 
 
-    public List<Project> activeProjects() {
-        /// TODO: tablo.Rows[i]["projeAdi"] = tablo.Rows[i]["projeAdi"].ToString().Substring(0, 40);
-        return repository.findActiveProjects(true);
-    }
-
-    public List<Project> archiveProjects() {
-        /// TODO: tablo.Rows[i]["projeAdi"] = tablo.Rows[i]["projeAdi"].ToString().Substring(0, 40);
-        return repository.findActiveProjects(false);
-    }
 
     public List<Project> findAll() {
         /// TODO: tablo.Rows[i]["projeAdi"] = tablo.Rows[i]["projeAdi"].ToString().Substring(0, 40);
@@ -41,17 +32,25 @@ public class ProjectService {
         repository.delete(project);
     }
 
-    public Project setArchive(Project project, Boolean archive) {
+    public Project setArchive(Long projectId, Boolean archive) {
+        Project project = repository.findById(projectId).orElse(null);
+        if(project == null) {
+            return null;
+        }
         project.setArchived(archive);
         return repository.saveAndFlush(project);
     }
 
     public List<Project> findProjectByAuth(Long type) {
-        return repository.findProjectByAuth(type);
+        return repository.findProjectByAuth(type, true);
     }
 
 
-    public List<Project> findActiveProjects() {
-        return repository.findActiveProjects(false);
+    public List<Project> findProjects(Long type, Boolean archived) {
+        return repository.findProjectByAuth(type, archived);
+    }
+
+    public List<Project> findAll(Long type) {
+        return repository.findAllByType(type);
     }
 }

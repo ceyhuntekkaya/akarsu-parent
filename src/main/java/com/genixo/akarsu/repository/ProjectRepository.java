@@ -10,11 +10,9 @@ import java.util.List;
 
 @Repository
 public interface ProjectRepository extends JpaRepository<Project, Long> {
-    @Query("Select a FROM Project a WHERE a.archived = :archived order by a.name")
-    List<Project> findActiveProjects(@Param("archived") boolean archived);
+    @Query("Select a FROM Project a WHERE a.authorizationLevel <= :type and a.archived = :archived order by a.name")
+    List<Project> findProjectByAuth(@Param("type") Long type, @Param("archived") boolean archived);
 
     @Query("Select a FROM Project a WHERE a.authorizationLevel <= :type order by a.name")
-    List<Project> findProjectByAuth(@Param("type") Long type);
-
-
+    List<Project> findAllByType(@Param("type") Long type);
 }

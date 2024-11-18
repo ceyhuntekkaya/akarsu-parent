@@ -16,6 +16,7 @@ import java.util.Date;
 public class Log {
     @Id
     @Column(name = "logId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
     @JoinColumn(name = "evrakId")

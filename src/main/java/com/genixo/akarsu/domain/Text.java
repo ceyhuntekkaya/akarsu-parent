@@ -15,6 +15,7 @@ import java.util.Date;
 public class Text {
 	@Id
 	@Column(name = "metinId")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Long id;
 	@Column(name = "baslik")
 	String header;

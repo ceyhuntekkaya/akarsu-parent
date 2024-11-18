@@ -17,6 +17,7 @@ public class Document {
 
     @Id
     @Column(name = "evrakId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name = "tur")
     String type;

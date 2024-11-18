@@ -18,6 +18,7 @@ public class StorageRestController {
 
     private final StorageService storageService;
 
+
     @PostMapping(value = "/upload/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> uploadFile(
             @RequestParam("file") MultipartFile file

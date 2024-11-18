@@ -14,6 +14,7 @@ public class DocumentFile {
 
     @Id
     @Column(name = "docId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
     @JoinColumn(name = "kayitId")

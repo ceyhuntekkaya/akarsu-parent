@@ -20,7 +20,7 @@ public class UserService {
         if (type == 1) {
             return repository.findByActive();
         }
-        return repository.findAll();
+        return repository.findAllUser();
     }
 
 

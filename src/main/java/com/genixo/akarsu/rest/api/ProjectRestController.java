@@ -24,11 +24,29 @@ public class ProjectRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/active/", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Project>> findProjectByActive() {
-        List<Project> result = projectService.findActiveProjects();
+    @GetMapping(value = "/active/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Project>> findProjectByActive(@PathVariable("type") Long type) {
+        List<Project> result = projectService.findProjects(type, true);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/archived/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Project>> findProjectByArchived(@PathVariable("type") Long type) {
+        List<Project> result = projectService.findProjects(type, false);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/all/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Project>> findAllProject(@PathVariable("type") Long type) {
+        List<Project> result = projectService.findAll(type);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/set/archived/{projectId}/{archived}/{type}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Project>> findAllProject(@PathVariable("projectId") Long projectId, @PathVariable("archived") Boolean archived, @PathVariable("type") Long type) {
+        projectService.setArchive(projectId, archived);
+        List<Project> result = projectService.findAll(type);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }

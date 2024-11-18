@@ -15,6 +15,7 @@ import java.util.Date;
 public class Project {
     @Id
     @Column(name = "projeId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @Column(name = "projeAdi")
     String name;

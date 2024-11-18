@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 public class Authority {
     @Id
     @Column(name = "yetkiId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
     @JoinColumn(name = "personelId", unique = true)

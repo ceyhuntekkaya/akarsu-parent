@@ -2,12 +2,10 @@ package com.genixo.akarsu.rest.api;
 
 import com.genixo.akarsu.domain.*;
 import com.genixo.akarsu.dto.DocumentDetailDto;
+import com.genixo.akarsu.dto.DocumentSaveDto;
 import com.genixo.akarsu.dto.DocumentSearchDto;
 import com.genixo.akarsu.dto.DocumentSentDto;
-import com.genixo.akarsu.service.DocumentFileService;
-import com.genixo.akarsu.service.DocumentService;
-import com.genixo.akarsu.service.LogService;
-import com.genixo.akarsu.service.TransactionService;
+import com.genixo.akarsu.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin
@@ -26,6 +25,7 @@ public class DocumentRestController {
     final TransactionService transactionService;
     final LogService logService;
     final DocumentFileService documentFileService;
+    final StorageService storageService;
 
     @GetMapping(value = "/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DocumentDetailDto>> myDocuments(@PathVariable("userId") Long userId) {
@@ -84,10 +84,55 @@ public class DocumentRestController {
     }
 
     @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Document> add(@RequestBody Document document) {
-        Document documents = documentService.add(document);
-        return new ResponseEntity<>(documents, HttpStatus.CREATED);
+    public ResponseEntity<Document> add(@RequestBody DocumentSaveDto documentSaveDto) {
+        Document document = documentSaveDto.getDocument();
+        document.setOcr("");
+        document.setArchive(false);
+        document.setConnected(null);
+        document.setDocumentAddress("");
+        document.setRecordDate(new Date());
+
+        Document createdDocument = documentService.add(document);
+        Long documentId = createdDocument.getId();
+        for(String file : documentSaveDto.getFiles()) {
+            DocumentFile documentFile = new DocumentFile();
+            documentFile.setDocument(createdDocument);
+            documentFile.setName(file);
+            documentFile.setType("doc");
+            documentFileService.add(documentFile);
+            storageService.moveFile(file, documentId);
+        }
+
+
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
     }
+
+
+    /*
+
+
+
+    [WebMethod]
+    public Decimal evrakKaydet(String tur, String grup, Decimal proje, String tarih, String sayi, String konu, Decimal yetki, Decimal kaydeden, Decimal sahip)
+    {
+
+        dsTableAdapters.evraklarTableAdapter adapKontrol = new dsTableAdapters.evraklarTableAdapter();
+        ds.evraklarDataTable tabloKontrol = new ds.evraklarDataTable();
+        adapKontrol.projeSayiVarmi(tabloKontrol, proje, sayi);
+        if (tabloKontrol.Rows.Count == 0)
+        {
+            dsTableAdapters.evrakKaydetTableAdapter adap = new dsTableAdapters.evrakKaydetTableAdapter();
+            ds.evrakKaydetDataTable tablo = new ds.evrakKaydetDataTable();
+            adap.Fill(tablo, tur, grup, proje, tarihYap(tarih), sayi, konu, yetki, DateTime.Now, kaydeden, false, "", 0, sahip, "");
+            gonder(Convert.ToDecimal(tablo.Rows[0][0]), kaydeden, kaydeden, "", 0, false);
+            return Convert.ToDecimal(tablo.Rows[0][0]);
+        }
+        else
+        {
+            return -1;
+        }
+    }
+     */
 
     @GetMapping(value = "/user/{userId}/project/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Document>> findByUserAndProject(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {

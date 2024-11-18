@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -31,6 +32,7 @@ public class StorageService {
         String extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
         String fileName = file.getOriginalFilename();
         Path rootPath = Paths.get(userBucketPath + "Temp");
+        createDirectoryIfNotExists(rootPath.toString());
         Path path = rootPath.resolve(fileName);
         try {
             Files.copy(file.getInputStream(), path, REPLACE_EXISTING);
@@ -43,6 +45,7 @@ public class StorageService {
     public Resource loadFile(String fileName, String path) {
         try {
             Path brandRootPath = Paths.get(userBucketPath + path);
+            createDirectoryIfNotExists(brandRootPath.toString());
             Path file = brandRootPath.resolve(fileName);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
@@ -58,7 +61,8 @@ public class StorageService {
 
     public Resource loadFile(String fileName) {
         try {
-            Path brandRootPath = Paths.get(userBucketPath + "Docs");
+            Path brandRootPath = Paths.get(userBucketPath + "Docs/");
+            createDirectoryIfNotExists(brandRootPath.toString());
             Path file = brandRootPath.resolve(fileName);
             Resource resource = new UrlResource(file.toUri());
             if (resource.exists() || resource.isReadable()) {
@@ -72,10 +76,21 @@ public class StorageService {
         }
     }
 
+    public void createDirectoryIfNotExists(String directoryPath) {
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+    }
+
     public Resource moveFile(String fileName, Long documentId) {
         try {
-            Path tempRootPath = Paths.get(userBucketPath + "Tempp");
-            Path brandRootPath = Paths.get(userBucketPath + "Docs/" + documentId);
+            Path tempRootPath = Paths.get(userBucketPath + "Temp");
+            Path brandRootPath = Paths.get(userBucketPath + "Docs/" + documentId+"/");
+
+            createDirectoryIfNotExists(tempRootPath.toString());
+            createDirectoryIfNotExists(brandRootPath.toString());
+
             Path temp_file = tempRootPath.resolve(fileName);
             Path final_file = brandRootPath.resolve(fileName);
 
