@@ -27,7 +27,6 @@ public class DocumentRestController {
     final LogService logService;
     final DocumentFileService documentFileService;
 
-
     @GetMapping(value = "/user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<DocumentDetailDto>> myDocuments(@PathVariable("userId") Long userId) {
         List<DocumentDetailDto> result = new ArrayList<>();
@@ -52,11 +51,24 @@ public class DocumentRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
     @GetMapping(value = "/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Document> findById(@PathVariable("documentId") Long documentId) {
         Document result = documentService.findById(documentId);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/document/{documentId}/files/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<DocumentFile>> findByIdFiles(@PathVariable("documentId") Long documentId) {
+        Document result = documentService.findById(documentId);
+        List<DocumentFile> files = documentFileService.findByDocumentId(result.getId());
+        return new ResponseEntity<>(files, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/document/{documentId}/logs/", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Log>> findByIdLogs(@PathVariable("documentId") Long documentId) {
+        Document result = documentService.findById(documentId);
+        List<Log> logs = logService.findByDocumentId(result.getId());
+        return new ResponseEntity<>(logs, HttpStatus.OK);
     }
 
     @GetMapping(value = "/project/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -83,7 +95,6 @@ public class DocumentRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
     @PostMapping(value = "/search/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
         List<Document> documents = documentService.documentSearch(params);
@@ -92,7 +103,7 @@ public class DocumentRestController {
 
 
     @PostMapping(value = "/send/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Transaction>> documentSend(DocumentSentDto documentSentDto) {
+    public ResponseEntity<List<Transaction>> documentSend(@RequestBody DocumentSentDto documentSentDto) {
         transactionService.documentSend(documentSentDto);
         List<Transaction> result = transactionService.findByDocumentId(documentSentDto.getDocumentId());
         return new ResponseEntity<>(result, HttpStatus.OK);

@@ -50,6 +50,7 @@ public class SecurityConfiguration {
                         "/configuration/ui",
                         "/configuration/security",
                         "/webjars/**",
+                        "/storage/**",
                         "/api/v1/**",
                         "/api/v1/"
                 )

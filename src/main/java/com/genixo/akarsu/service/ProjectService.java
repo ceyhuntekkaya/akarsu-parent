@@ -1,13 +1,11 @@
 package com.genixo.akarsu.service;
 
 import com.genixo.akarsu.domain.Project;
-import com.genixo.akarsu.dto.SearchProjectDto;
 import com.genixo.akarsu.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor

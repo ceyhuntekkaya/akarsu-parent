@@ -16,6 +16,7 @@ public class Transaction {
 
     @Id
     @Column(name = "kayitId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
     @ManyToOne
     @JoinColumn(name = "evrakNo")
