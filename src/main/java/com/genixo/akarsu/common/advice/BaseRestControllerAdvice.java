@@ -1,6 +1,5 @@
 package com.genixo.akarsu.common.advice;
 
-
 import com.genixo.akarsu.common.exception.AlreadyExistsException;
 import com.genixo.akarsu.common.exception.IdNotAvailableException;
 import com.genixo.akarsu.common.exception.NotFoundException;

@@ -14,4 +14,7 @@ public interface AuthorityRepository extends JpaRepository<Authority, Long> {
 
     @Query("Select a FROM Authority a WHERE a.user.username= :username and a.user.password= :password")
     Authority login(@Param("username") String username, @Param("password") String password);
+
+    @Query("Select a FROM Authority a WHERE a.user.id= :userId")
+    Authority getAuthority(@Param("userId") Long userId);
 }

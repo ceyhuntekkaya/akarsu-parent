@@ -1,15 +1,50 @@
-package com.genixo.akarsu.repository;
+Java Model
+@Data
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "evraklar")
+public class Document {
 
-import com.genixo.akarsu.domain.Document;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+    @Id
+    @Column(name = "evrakId")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    Long id;
+    @Column(name = "tur")
+    String type;
+    @Column(name = "grup")
+    String group;
+    @ManyToOne
+    @JoinColumn(name = "proje")
+    Project project;
+    @Column(name = "tarih")
+    Date documentDate;
+    @Column(name = "sayi")
+    String number;
+    @Column(name = "konu")
+    String subject;
+    @Column(name = "yetkiDuzeyi")
+    Long authorizationLevel;
+    @Column(name = "kayitTarih")
+    Date recordDate;
+    @ManyToOne
+    @JoinColumn(name = "kaydeden")
+    User recordBy;
+    @Column(name = "arsiv")
+    Boolean archive;
+    @Column(name = "evrakAdres")
+    String documentAddress;
+    @ManyToOne()
+    @JoinColumn(name = "bagli")
+    Document connected;
+    @ManyToOne
+    @JoinColumn(name = "sahip")
+    User owner;
+    @Column(name = "ocr")
+    String ocr;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
+}
+Java Repository
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
@@ -41,3 +76,49 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     @Query("Select a FROM Document a WHERE a.project.id= :projectId order by a.recordDate desc")
     List<Document> findByProjectId(@Param("projectId") Long projectId);
 }
+
+Java Servis
+
+public List<Document> documentSearch(DocumentSearchDto params) {
+        Date currentDate = new Date(System.currentTimeMillis());
+        Date dateBegin = currentDate;
+        Date dateEnd = currentDate;
+        long projectId = 0L;
+
+        String number = params.getDocumentNumber().toUpperCase();
+        String subject = params.getSubject().toUpperCase();
+        String word = params.getSearchWord().toUpperCase();
+        String type = params.getDocumentType().toUpperCase();
+        String group = params.getDocumentGroup().toUpperCase();
+
+        if (params.getProjectId() > 0) {
+            projectId = params.getProjectId();
+        }
+        if (params.getBeginAt() != null) {
+            dateBegin = params.getBeginAt();
+        }
+        if (params.getBeginAt() != null) {
+            dateEnd = params.getEndAt();
+        }
+        Boolean archive = params.getArchive();
+
+        if (projectId == 0 && dateBegin == currentDate && dateEnd == currentDate) {
+            return repository.find(number, subject, word, type, group, archive);
+        } else if (projectId > 0 && dateBegin != currentDate && dateEnd != currentDate) {
+            return repository.findProjectAndDate(number, subject, word, type, group, archive, projectId, dateBegin, dateEnd);
+        } else if (projectId > 0 && dateBegin == currentDate && dateEnd == currentDate) {
+            return repository.findProject(number, subject, word, type, group, archive, projectId);
+        } else if (projectId == 0 && dateBegin != currentDate && dateEnd != currentDate) {
+            return repository.findDate(number, subject, word, type, group, archive, dateBegin, dateEnd);
+        } else {
+            return repository.findWord(number, subject, word, type, group, archive);
+        }
+    }
+
+Java API
+
+  @PostMapping(value = "/search/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
+        List<Document> documents = documentService.documentSearch(params);
+        return new ResponseEntity<>(documents, HttpStatus.CREATED);
+    }

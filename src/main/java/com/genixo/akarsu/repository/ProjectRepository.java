@@ -13,6 +13,6 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     @Query("Select a FROM Project a WHERE a.authorizationLevel <= :type and a.archived = :archived order by a.name")
     List<Project> findProjectByAuth(@Param("type") Long type, @Param("archived") boolean archived);
 
-    @Query("Select a FROM Project a WHERE a.authorizationLevel <= :type order by a.name")
+    @Query("Select a FROM Project a WHERE a.authorizationLevel <= :type order by a.archived desc , a.name")
     List<Project> findAllByType(@Param("type") Long type);
 }

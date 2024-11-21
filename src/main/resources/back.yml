@@ -1,0 +1,38 @@
+spring:
+  profiles:
+    active: dev, config-url
+
+  datasource:
+    url: jdbc:sqlserver://;serverName=localhost;databaseName=akarsu;encrypt=true;trustServerCertificate=true;
+    #url: jdbc:sqlserver://;serverName=192.168.1.4;databaseName=oyun;encrypt=true;trustServerCertificate=true;
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    username: sa
+    password: Str421900*
+
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
+        physicalNamingStrategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
+
+management:
+  endpoints:
+    web:
+      base-path: /system/actuator
+
+application:
+  security:
+    jwt:
+      secret-key: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+      expiration: 86400000 # a day
+      refresh-token:
+        expiration: 604800000 # 7 days
+
+storage:
+  base: /Users/developer/Desktop/file/
