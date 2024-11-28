@@ -1,5 +1,6 @@
 package com.genixo.akarsu.service;
 
+import com.genixo.akarsu.domain.Document;
 import com.genixo.akarsu.domain.Project;
 import com.genixo.akarsu.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProjectService {
     final ProjectRepository repository;
+    final DocumentService documentService;
 
 
 
-    public List<Project> findAll() {
-        /// TODO: tablo.Rows[i]["projeAdi"] = tablo.Rows[i]["projeAdi"].ToString().Substring(0, 40);
-        return repository.findAll();
-    }
 
     public Project add(Project project) {
         return repository.saveAndFlush(project);
@@ -42,15 +40,35 @@ public class ProjectService {
     }
 
     public List<Project> findProjectByAuth(Long type) {
-        return repository.findProjectByAuth(type, true);
+        return repository.findProjectAll(type);
     }
 
 
     public List<Project> findProjects(Long type, Boolean archived) {
-        return repository.findProjectByAuth(type, archived);
+        if(archived == true){
+            return repository.findActive(type);
+        }
+        return repository.findNonActive(type);
     }
 
     public List<Project> findAll(Long type) {
         return repository.findAllByType(type);
+    }
+
+    public void deleteByProjectId(Long projectId) {
+        List<Document> documents = documentService.findByProject(projectId);
+        if(documents.isEmpty()) {
+            repository.deleteById(projectId);
+        }
+    }
+
+    public Project updateProject(Long projectId, Project project) {
+        Project project1 = repository.findById(projectId).
+                orElse(null);
+        if(project1 == null) {
+            return null;
+        }
+        project1.setArchived(project.getArchived());
+        return repository.saveAndFlush(project1);
     }
 }

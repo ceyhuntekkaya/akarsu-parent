@@ -13,11 +13,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class LogService {
-    /*
 
-    logGoster
-    logGosterEvrakAra
-     */
     final LogRepository repository;
 
     public void addLog(Long documentId, Long userId, String transaction, String ip) {

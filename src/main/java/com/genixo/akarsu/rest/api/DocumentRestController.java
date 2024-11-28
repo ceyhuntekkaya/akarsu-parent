@@ -1,5 +1,6 @@
 package com.genixo.akarsu.rest.api;
 
+import com.genixo.akarsu.common.exception.NotFoundException;
 import com.genixo.akarsu.domain.*;
 import com.genixo.akarsu.dto.DocumentDetailDto;
 import com.genixo.akarsu.dto.DocumentSaveDto;
@@ -134,15 +135,11 @@ public class DocumentRestController {
     }
      */
 
-    @GetMapping(value = "/user/{userId}/project/{projectId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Document>> findByUserAndProject(@PathVariable("userId") Long userId, @PathVariable("projectId") Long projectId) {
-        List<Document> result = documentService.findByUserAndProject(userId, projectId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+
 
     @PostMapping(value = "/search/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
-        List<Document> documents = documentService.documentSearch(params);
+        List<Document> documents = documentService.searchDocuments(params);
         return new ResponseEntity<>(documents, HttpStatus.CREATED);
     }
 
@@ -159,4 +156,45 @@ public class DocumentRestController {
         List<Transaction> result = transactionService.findByDocumentId(documentId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+// YENİLER
+    @GetMapping(value = "/delete/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteByDocumentId(@PathVariable("documentId") Long documentId) throws NotFoundException {
+        documentService.deleteByDocumentId(documentId);
+        return new ResponseEntity<>("DELETED", HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/{documentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Document> updateDocument(@PathVariable("documentId") Long documentId, @RequestBody Document document) throws NotFoundException {
+        Document updatedDocumentFile = documentService.updateDocument(documentId, document);
+        return new ResponseEntity<>(updatedDocumentFile, HttpStatus.OK);
+    }
+
+/*
+
+    @DeleteMapping(value = "/document/file/{documentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> deleteByDocumentFileId(@PathVariable("documentId") Long documentId) throws NotFoundException {
+        documentFileService.deleteByDocumentFileId(documentId);
+        return new ResponseEntity<>("DELETED", HttpStatus.OK);
+    }
+
+
+
+    @PutMapping(value = "/document/file/archive/{documentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<DocumentFile> archiveByDocumentFileId(@PathVariable("documentId") Long documentId, @RequestBody Chapter chapter) throws NotFoundException {
+        DocumentFile updatedDocumentFile = documentFileService.archiveByDocumentFileId(documentId);
+        userService.deleteByUserId(userId);
+        return new ResponseEntity<>(updatedDocumentFile, HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/document/{documentId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Document> archiveByDocumentFileId(@PathVariable("documentId") Long documentId, @RequestBody Document document) throws NotFoundException {
+        Document updatedDocument = documentService.updateDocument(documentId, document);
+        userService.deleteByUserId(userId);
+        return new ResponseEntity<>(updatedDocument, HttpStatus.OK);
+    }
+
+ */
+
+
 }

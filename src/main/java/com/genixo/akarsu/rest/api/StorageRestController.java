@@ -28,8 +28,8 @@ public class StorageRestController {
         return new ResponseEntity<>(createdFile, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/preview/file/{fileId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> previewFile(@PathVariable("fileId") Long fileId) {
+    @GetMapping(value = "/preview/file/{fileId}/{fileName}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> previewFile(@PathVariable("fileId") Long fileId, @PathVariable("fileName") String fileName) {
         Resource file = storageService.loadFile(fileId);
         return new ResponseEntity<>(file, HttpStatus.OK);
     }

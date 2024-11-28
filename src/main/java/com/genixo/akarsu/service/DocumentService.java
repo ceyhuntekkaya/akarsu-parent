@@ -19,41 +19,13 @@ public class DocumentService {
         return repository.findAll();
     }
 
-    public List<Document> documentSearch(DocumentSearchDto params) {
-        Date currentDate = new Date(System.currentTimeMillis());
-        Date dateBegin = currentDate;
-        Date dateEnd = currentDate;
-        long projectId = 0L;
-
-        String number = params.getDocumentNumber().toUpperCase();
-        String subject = params.getSubject().toUpperCase();
-        String word = params.getSearchWord().toUpperCase();
-        String type = params.getDocumentType().toUpperCase();
-        String group = params.getDocumentGroup().toUpperCase();
-
-        if (params.getProjectId() > 0) {
-            projectId = params.getProjectId();
-        }
-        if (params.getBeginAt() != null) {
-            dateBegin = params.getBeginAt();
-        }
-        if (params.getBeginAt() != null) {
-            dateEnd = params.getEndAt();
-        }
-        Boolean archive = params.getArchive();
-
-        if (projectId == 0 && dateBegin == currentDate && dateEnd == currentDate) {
-            return repository.find(number, subject, word, type, group, archive);
-        } else if (projectId > 0 && dateBegin != currentDate && dateEnd != currentDate) {
-            return repository.findProjectAndDate(number, subject, word, type, group, archive, projectId, dateBegin, dateEnd);
-        } else if (projectId > 0 && dateBegin == currentDate && dateEnd == currentDate) {
-            return repository.findProject(number, subject, word, type, group, archive, projectId);
-        } else if (projectId == 0 && dateBegin != currentDate && dateEnd != currentDate) {
-            return repository.findDate(number, subject, word, type, group, archive, dateBegin, dateEnd);
-        } else {
-            return repository.findWord(number, subject, word, type, group, archive);
-        }
+    public List<Document> searchDocuments(DocumentSearchDto params) {
+        return repository.searchByNonEmptyCriteria(params);
     }
+
+
+
+
 
     public Document findById(Long documentId) {
         return repository.findById(documentId).orElse(null);
@@ -104,13 +76,34 @@ public class DocumentService {
         return null;
     }
 
-    public List<Document> findByUser(Long userId) {
-        return repository.findByUser(userId);
+    public void deleteByDocumentFileId(Long documentId) {
+
     }
 
-    public List<Document> findByUserAndProject(Long userId, Long projectId) {
-        return repository.findByUserAndProject(userId, projectId);
+    public void deleteByDocumentId(Long documentId) {
+        repository.deleteById(documentId);
     }
+
+    public Document updateDocument(Long documentId, Document document) {
+        Document document1 = repository.findById(documentId).orElse(null);
+        assert document1 != null;
+        document1.setNumber(document.getNumber());
+        document1.setSubject(document.getSubject());
+        document1.setOcr(document.getOcr());
+        document1.setType(document.getType());
+        document1.setGroup(document.getGroup());
+        document1.setArchive(document.getArchive());
+        document1.setOwner(document.getOwner());
+        document1.setProject(document.getProject());
+        document1.setConnected(document.getConnected());
+        document1.setDocumentAddress(document.getDocumentAddress());
+        document1.setDocumentDate(document.getDocumentDate());
+        return repository.saveAndFlush(document1);
+
+    }
+
+
+
     /*
  evrakArama
     evrakAramaArsiv

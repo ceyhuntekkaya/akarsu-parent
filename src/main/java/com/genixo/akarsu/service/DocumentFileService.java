@@ -38,6 +38,13 @@ public class DocumentFileService {
         return repository.saveAndFlush(file);
     }
 
+    public void deleteByDocumentFileId(Long documentId) {
+        repository.deleteById(documentId);
+
+    }
+
+
+
 
     /*
  docs

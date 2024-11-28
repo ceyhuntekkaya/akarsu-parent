@@ -3,11 +3,12 @@ spring:
     active: dev, config-url
 
   datasource:
-    url: jdbc:sqlserver://;serverName=localhost;databaseName=akarsu;encrypt=true;trustServerCertificate=true;
-    #url: jdbc:sqlserver://;serverName=192.168.1.4;databaseName=oyun;encrypt=true;trustServerCertificate=true;
+    url: jdbc:sqlserver://host.docker.internal\\ORKASQL2022:58146;databaseName=db;encrypt=true;trustServerCertificate=true;
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    username: sa
-    password: Str421900*
+    #username: sa
+    #password: Str421900*
+    username: ceyhun
+    password: 4219
 
   jpa:
     hibernate:
@@ -35,4 +36,17 @@ application:
         expiration: 604800000 # 7 days
 
 storage:
-  base: /Users/developer/Desktop/file/
+  base: ${STORAGE_BASE_PATH:/app/uploads/}
+
+logging:
+  level:
+    #org.hibernate.SQL: DEBUG
+    #org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    #com.zaxxer.hikari: DEBUG
+    #org.springframework.jdbc: DEBUG
+    root: ERROR
+    org.springframework.web: ERROR
+    org.springframework.boot: ERROR
+    org.hibernate: ERROR
+    org.apache: ERROR
+    com.genixo.akarsu: ERROR
