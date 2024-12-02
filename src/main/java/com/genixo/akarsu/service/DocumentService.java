@@ -51,22 +51,15 @@ public class DocumentService {
 
 
     public Document add(Document document) {
-        /// TODO: LOG Add
-        // sayı kontrol et
-        // kendine gönder
-
         Document checkDocument = repository.findByProjectAndNumber(
                 document.getProject().getId(),
                 document.getNumber()
         ).orElse(null);
-
-        document.setNumber(document.getNumber().toUpperCase());
-        document.setSubject(document.getSubject().toUpperCase());
-        document.setOcr(document.getOcr().toUpperCase());
+        document.setNumber(document.getNumber());
+        document.setSubject(document.getSubject());
+        document.setOcr(document.getOcr());
         document.setType(document.getType().toUpperCase());
         document.setGroup(document.getGroup().toUpperCase());
-
-
         if (checkDocument == null) {
             Document createdDocument = repository.saveAndFlush(document);
             transactionService.send(null, createdDocument.getId(), document.getOwner().getId(),
@@ -76,9 +69,7 @@ public class DocumentService {
         return null;
     }
 
-    public void deleteByDocumentFileId(Long documentId) {
 
-    }
 
     public void deleteByDocumentId(Long documentId) {
         repository.deleteById(documentId);
