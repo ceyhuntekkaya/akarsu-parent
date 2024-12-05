@@ -21,6 +21,11 @@ spring:
         dialect: org.hibernate.dialect.SQLServerDialect
         physicalNamingStrategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
 
+  servlet:
+    multipart:
+      max-file-size: 800MB
+      max-request-size: 800MB
+
 management:
   endpoints:
     web:

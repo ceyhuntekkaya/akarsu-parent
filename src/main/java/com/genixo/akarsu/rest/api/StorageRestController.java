@@ -3,6 +3,7 @@ package com.genixo.akarsu.rest.api;
 import com.genixo.akarsu.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,22 @@ public class StorageRestController {
         return new ResponseEntity<>(createdFile, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/preview/file/{fileId}/{fileName}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> previewFile(@PathVariable("fileId") Long fileId, @PathVariable("fileName") String fileName) {
+    @GetMapping(value = "/preview2/file/{fileId}/{fileName}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<Resource> previewFile2(@PathVariable("fileId") Long fileId, @PathVariable("fileName") String fileName) {
         Resource file = storageService.loadFile(fileId);
         return new ResponseEntity<>(file, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/preview/file/{fileId}/{fileName}")
+    public ResponseEntity<Resource> previewFile(
+            @PathVariable("fileId") Long fileId,
+            @PathVariable("fileName") String fileName
+    ) {
+        Resource file = storageService.loadFile(fileId);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .body(file);
     }
 }

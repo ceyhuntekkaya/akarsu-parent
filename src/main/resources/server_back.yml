@@ -10,6 +10,11 @@ spring:
     username: ceyhun
     password: 4219
 
+  servlet:
+    multipart:
+      max-file-size: 800MB
+      max-request-size: 800MB
+
   jpa:
     hibernate:
       naming:
