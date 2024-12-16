@@ -94,8 +94,11 @@ public class DocumentRestController {
         document.setRecordDate(new Date());
 
         Document createdDocument = documentService.add(document);
+        if (createdDocument == null) {
+            return new ResponseEntity<>(null, HttpStatus.CONFLICT);
+        }
         Long documentId = createdDocument.getId();
-        for(String file : documentSaveDto.getFiles()) {
+        for (String file : documentSaveDto.getFiles()) {
             DocumentFile documentFile = new DocumentFile();
             documentFile.setDocument(createdDocument);
             documentFile.setName(file);
@@ -103,39 +106,8 @@ public class DocumentRestController {
             documentFileService.add(documentFile);
             storageService.moveFile(file, documentId);
         }
-
-
-        return new ResponseEntity<>(null, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdDocument, HttpStatus.CREATED);
     }
-
-
-    /*
-
-
-
-    [WebMethod]
-    public Decimal evrakKaydet(String tur, String grup, Decimal proje, String tarih, String sayi, String konu, Decimal yetki, Decimal kaydeden, Decimal sahip)
-    {
-
-        dsTableAdapters.evraklarTableAdapter adapKontrol = new dsTableAdapters.evraklarTableAdapter();
-        ds.evraklarDataTable tabloKontrol = new ds.evraklarDataTable();
-        adapKontrol.projeSayiVarmi(tabloKontrol, proje, sayi);
-        if (tabloKontrol.Rows.Count == 0)
-        {
-            dsTableAdapters.evrakKaydetTableAdapter adap = new dsTableAdapters.evrakKaydetTableAdapter();
-            ds.evrakKaydetDataTable tablo = new ds.evrakKaydetDataTable();
-            adap.Fill(tablo, tur, grup, proje, tarihYap(tarih), sayi, konu, yetki, DateTime.Now, kaydeden, false, "", 0, sahip, "");
-            gonder(Convert.ToDecimal(tablo.Rows[0][0]), kaydeden, kaydeden, "", 0, false);
-            return Convert.ToDecimal(tablo.Rows[0][0]);
-        }
-        else
-        {
-            return -1;
-        }
-    }
-     */
-
-
 
     @PostMapping(value = "/search/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Document>> documentSearch(@RequestBody DocumentSearchDto params) {
@@ -157,7 +129,7 @@ public class DocumentRestController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-// YENİLER
+    // YENİLER
     @GetMapping(value = "/delete/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> deleteByDocumentId(@PathVariable("documentId") Long documentId) throws NotFoundException {
         documentService.deleteByDocumentId(documentId);
